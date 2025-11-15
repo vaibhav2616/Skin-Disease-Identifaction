@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skin Diseases Identification</title>
+  <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <style>
+    .bg-dark { background-color: #42678c !important; }
+    #result { color: #0a1c4ed1; }
+    body { background-color: lavender; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">Skin Diseases Identification Using Image Analysis</a>
+    </div>
+  </nav>
+
+  <div class="container" style="margin-top:2em">
+    <div class="row">
+      <div class="col-sm-6">
+        <h3 style="font-family:ALGERian;">Skin Diseases Identification: </h3>
+        <p style="font-family:Bahnschrift SemiLight;">
+          Upload a skin image and the model will predict the disease.
+        </p>
+        <img src="https://image.freepik.com/free-vector/girl-worry-with-skin-problems_77984-85.jpg"
+             style="height:390px" class="img-rounded" alt="Illustration">
+      </div>
+
+      <div class="col-sm-6">
+        <h4>Upload Image Here</h4>
+
+        <form action="/predict" id="upload-file" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="imageUpload">Choose image</label>
+            <input type="file" name="image" id="imageUpload" class="form-control-file" accept=".png,.jpg,.jpeg" required>
+          </div>
+          <button type="submit" class="btn btn-info btn-lg" id="btn-predict">Predict!</button>
+        </form>
+
+        <div style="margin-top:1.25rem">
+          <h3><span id="result">{{ prediction_text|default('') }}</span></h3>
+        </div>
+
+        <!-- Top-3 list -->
+        {% if top3 %}
+        <div class="mt-3">
+          <h5>Top predictions</h5>
+          <ul class="list-group">
+            {% for label, prob, idx in top3 %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ loop.index }}.</strong> {{ label }} <small class="text-muted"> (index={{ idx }})</small>
+              </div>
+              <span class="badge badge-primary badge-pill">{{ '%.2f'|format(prob * 100) }}%</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- Full confidence table -->
+        {% if all_probs %}
+        <div class="mt-3">
+          <h6>Confidence per class</h6>
+          <table class="table table-sm table-bordered">
+            <thead class="thead-light">
+              <tr><th>Class</th><th style="width:120px">Probability</th></tr>
+            </thead>
+            <tbody>
+              {% for label, prob in all_probs %}
+              <tr>
+                <td>{{ label }}</td>
+                <td>{{ '%.2f'|format(prob * 100) }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
