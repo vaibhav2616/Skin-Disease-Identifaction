@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+tfenv/
+*.h5
+*.jpg
+*.jpeg
+*.png
+*.webp
+

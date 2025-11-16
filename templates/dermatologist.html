@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Dermatologist — Cosmic DermAI</title>
+  <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+  /* PROFESSIONAL SPACE UI THEME */
+  body {
+    background: radial-gradient(circle at top, #0a0f2d 0%, #050616 40%, #000 100%);
+    color: #f2f8ff;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+  .space-nav { background: rgba(10,20,45,0.85); backdrop-filter: blur(6px); border-bottom:1px solid rgba(0,255,255,0.12); }
+  .logo-icon{ height:40px; filter: drop-shadow(0 0 8px cyan); }
+  .hero-section{ padding:80px 0 40px; text-align:center; }
+  .hero-title{ font-size:42px; text-shadow:0 0 12px rgba(0,255,255,0.25); margin-bottom: 15px; }
+  .card-cosmic{ background: rgba(10,20,40,0.7); padding:25px; border-radius:14px; box-shadow:0 0 20px rgba(0,200,255,0.15); border:1px solid rgba(0,255,255,0.1); margin-bottom: 25px; }
+  .btn-astro{ background:linear-gradient(90deg,#00eaff,#0088ff); border-radius:8px; color:#000; font-weight:600; border:none; }
+  .btn-astro:hover{ background:linear-gradient(90deg,#0088ff,#00eaff); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,234,255,0.3); }
+  .icon-circle{ width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,#00eaff,#0088ff); display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:24px; }
+  .search-box{ background:rgba(10,20,40,0.8); border:2px solid rgba(0,255,255,0.2); border-radius:12px; padding:20px; margin-bottom:30px; }
+  .form-control-cosmic{ background:rgba(255,255,255,0.05); border:1px solid rgba(0,255,255,0.2); color:#e6fbff; border-radius:8px; padding:12px 15px; }
+  .form-control-cosmic:focus{ background:rgba(255,255,255,0.08); border-color:#00eaff; color:#e6fbff; box-shadow:0 0 10px rgba(0,234,255,0.2); }
+  .form-control-cosmic::placeholder{ color:#8fa8b8; }
+  .doctor-card{ transition: all 0.3s ease; cursor: pointer; }
+  .doctor-card:hover{ transform: translateY(-5px); box-shadow:0 10px 30px rgba(0,200,255,0.25); border-color:rgba(0,255,255,0.4); }
+  .rating-stars{ color:#ffc800; font-size:18px; }
+  .specialty-badge{ background:rgba(0,234,255,0.15); color:#00eaff; padding:5px 12px; border-radius:20px; font-size:12px; display:inline-block; margin:3px; }
+  .footer-section{ text-align:center; padding:24px; margin-top:40px; background:rgba(0,0,0,0.12); color:#bfeeff; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark space-nav navbar-expand-lg">
+    <div class="container">
+      <div class="d-flex align-items-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/3212/3212608.png" class="logo-icon" alt="logo" />
+        <a class="navbar-brand ml-2" href="/" style="color:#e6fbff">Cosmic DermAI</a>
+      </div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="/" style="color:#bfeeff">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#about-us" style="color:#bfeeff">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/find-dermatologist" style="color:#00eaff; font-weight:600;">Find Dermatologist</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title animate__animated animate__fadeInDown">👨‍⚕️ Connect with Expert Dermatologists</h1>
+      <p class="hero-subtitle animate__animated animate__fadeInUp" style="color:#bfeeff; font-size:18px;">Find the right skin care specialist for your needs</p>
+    </div>
+  </section>
+
+  <div class="container animate__animated animate__zoomIn">
+    <!-- Search Section -->
+    <div class="search-box">
+      <h4 style="color:#00eaff; margin-bottom:20px; text-align:center;">
+        <i class="fas fa-search" style="margin-right:10px;"></i>Search Dermatologists
+      </h4>
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <input type="text" class="form-control form-control-cosmic" placeholder="📍 City or Location" id="search-location">
+        </div>
+        <div class="col-md-4 mb-3">
+          <select class="form-control form-control-cosmic" id="search-specialty">
+            <option value="">All Specialties</option>
+            <option value="acne">Acne Treatment</option>
+            <option value="melanoma">Skin Cancer</option>
+            <option value="vitiligo">Vitiligo</option>
+            <option value="fungal">Fungal Infections</option>
+            <option value="cosmetic">Cosmetic Dermatology</option>
+            <option value="pediatric">Pediatric Dermatology</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <button class="btn btn-astro btn-block" id="search-btn">
+            <i class="fas fa-search" style="margin-right:8px;"></i>Search
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+      <div class="col-md-4 mb-4">
+        <div class="card-cosmic text-center">
+          <div class="icon-circle">
+            <i class="fas fa-calendar-check" style="color:#000;"></i>
+          </div>
+          <h5 style="color:#00eaff; margin-bottom:10px;">Easy Booking</h5>
+          <p style="color:#bfeeff; font-size:14px;">Book appointments instantly with verified dermatologists</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card-cosmic text-center">
+          <div class="icon-circle">
+            <i class="fas fa-video" style="color:#000;"></i>
+          </div>
+          <h5 style="color:#00eaff; margin-bottom:10px;">Video Consultations</h5>
+          <p style="color:#bfeeff; font-size:14px;">Consult from the comfort of your home via video call</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="card-cosmic text-center">
+          <div class="icon-circle">
+            <i class="fas fa-shield-alt" style="color:#000;"></i>
+          </div>
+          <h5 style="color:#00eaff; margin-bottom:10px;">Verified Doctors</h5>
+          <p style="color:#bfeeff; font-size:14px;">All dermatologists are verified and certified professionals</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dermatologists List -->
+    <h3 style="color:#00eaff; margin-bottom:25px; text-align:center;">
+      <i class="fas fa-user-md" style="margin-right:10px;"></i>Available Dermatologists
+    </h3>
+
+    <div id="doctors-list">
+      <!-- Doctor Card 1 -->
+      <div class="card-cosmic doctor-card">
+        <div class="row">
+          <div class="col-md-3 text-center">
+            <div class="icon-circle" style="width:100px; height:100px; font-size:40px;">
+              <i class="fas fa-user-md" style="color:#000;"></i>
+            </div>
+            <h5 style="color:#00eaff; margin-top:10px;">Dr. Sarah Johnson</h5>
+            <p style="color:#bfeeff; font-size:13px;">MD, Dermatology</p>
+            <div class="rating-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <span style="color:#bfeeff; font-size:14px; margin-left:5px;">4.9</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div style="margin-bottom:15px;">
+              <span class="specialty-badge">Acne Treatment</span>
+              <span class="specialty-badge">Skin Cancer</span>
+              <span class="specialty-badge">Cosmetic</span>
+            </div>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-map-marker-alt" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Location:</strong> New York, NY
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-clock" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Experience:</strong> 12+ years
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-graduation-cap" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Education:</strong> Harvard Medical School
+            </p>
+            <p style="color:#bfeeff; font-size:14px; margin-top:10px;">
+              Expert in treating acne, melanoma, and various skin conditions. Available for both in-person and video consultations.
+            </p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div style="margin-bottom:15px;">
+              <p style="color:#00eaff; font-size:18px; font-weight:600;">$150</p>
+              <p style="color:#bfeeff; font-size:12px;">per consultation</p>
+            </div>
+            <button class="btn btn-astro btn-block mb-2">
+              <i class="fas fa-calendar" style="margin-right:5px;"></i>Book Appointment
+            </button>
+            <button class="btn btn-outline-light btn-block" style="border-color:rgba(0,255,255,0.3); color:#00eaff;">
+              <i class="fas fa-video" style="margin-right:5px;"></i>Video Consult
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Card 2 -->
+      <div class="card-cosmic doctor-card">
+        <div class="row">
+          <div class="col-md-3 text-center">
+            <div class="icon-circle" style="width:100px; height:100px; font-size:40px;">
+              <i class="fas fa-user-md" style="color:#000;"></i>
+            </div>
+            <h5 style="color:#00eaff; margin-top:10px;">Dr. Michael Chen</h5>
+            <p style="color:#bfeeff; font-size:13px;">MD, Dermatology</p>
+            <div class="rating-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+              <span style="color:#bfeeff; font-size:14px; margin-left:5px;">4.8</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div style="margin-bottom:15px;">
+              <span class="specialty-badge">Vitiligo</span>
+              <span class="specialty-badge">Fungal Infections</span>
+              <span class="specialty-badge">Pediatric</span>
+            </div>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-map-marker-alt" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Location:</strong> Los Angeles, CA
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-clock" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Experience:</strong> 15+ years
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-graduation-cap" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Education:</strong> Stanford Medical School
+            </p>
+            <p style="color:#bfeeff; font-size:14px; margin-top:10px;">
+              Specialized in vitiligo treatment, ringworm, and pediatric dermatology. Known for compassionate care.
+            </p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div style="margin-bottom:15px;">
+              <p style="color:#00eaff; font-size:18px; font-weight:600;">$140</p>
+              <p style="color:#bfeeff; font-size:12px;">per consultation</p>
+            </div>
+            <button class="btn btn-astro btn-block mb-2">
+              <i class="fas fa-calendar" style="margin-right:5px;"></i>Book Appointment
+            </button>
+            <button class="btn btn-outline-light btn-block" style="border-color:rgba(0,255,255,0.3); color:#00eaff;">
+              <i class="fas fa-video" style="margin-right:5px;"></i>Video Consult
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Card 3 -->
+      <div class="card-cosmic doctor-card">
+        <div class="row">
+          <div class="col-md-3 text-center">
+            <div class="icon-circle" style="width:100px; height:100px; font-size:40px;">
+              <i class="fas fa-user-md" style="color:#000;"></i>
+            </div>
+            <h5 style="color:#00eaff; margin-top:10px;">Dr. Emily Rodriguez</h5>
+            <p style="color:#bfeeff; font-size:13px;">MD, Dermatology</p>
+            <div class="rating-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+              <span style="color:#bfeeff; font-size:14px; margin-left:5px;">5.0</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div style="margin-bottom:15px;">
+              <span class="specialty-badge">Melanoma</span>
+              <span class="specialty-badge">Skin Cancer</span>
+              <span class="specialty-badge">Surgical</span>
+            </div>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-map-marker-alt" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Location:</strong> Chicago, IL
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-clock" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Experience:</strong> 18+ years
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-graduation-cap" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Education:</strong> Johns Hopkins University
+            </p>
+            <p style="color:#bfeeff; font-size:14px; margin-top:10px;">
+              Leading expert in melanoma and skin cancer treatment. Board-certified with extensive surgical experience.
+            </p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div style="margin-bottom:15px;">
+              <p style="color:#00eaff; font-size:18px; font-weight:600;">$200</p>
+              <p style="color:#bfeeff; font-size:12px;">per consultation</p>
+            </div>
+            <button class="btn btn-astro btn-block mb-2">
+              <i class="fas fa-calendar" style="margin-right:5px;"></i>Book Appointment
+            </button>
+            <button class="btn btn-outline-light btn-block" style="border-color:rgba(0,255,255,0.3); color:#00eaff;">
+              <i class="fas fa-video" style="margin-right:5px;"></i>Video Consult
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Card 4 -->
+      <div class="card-cosmic doctor-card">
+        <div class="row">
+          <div class="col-md-3 text-center">
+            <div class="icon-circle" style="width:100px; height:100px; font-size:40px;">
+              <i class="fas fa-user-md" style="color:#000;"></i>
+            </div>
+            <h5 style="color:#00eaff; margin-top:10px;">Dr. James Wilson</h5>
+            <p style="color:#bfeeff; font-size:13px;">MD, Dermatology</p>
+            <div class="rating-stars">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+              <span style="color:#bfeeff; font-size:14px; margin-left:5px;">4.7</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div style="margin-bottom:15px;">
+              <span class="specialty-badge">Acne Treatment</span>
+              <span class="specialty-badge">Cosmetic</span>
+              <span class="specialty-badge">Peeling Skin</span>
+            </div>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-map-marker-alt" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Location:</strong> Miami, FL
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-clock" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Experience:</strong> 10+ years
+            </p>
+            <p style="color:#e6fbff; line-height:1.8; font-size:14px;">
+              <i class="fas fa-graduation-cap" style="color:#00eaff; margin-right:8px;"></i>
+              <strong>Education:</strong> University of Miami
+            </p>
+            <p style="color:#bfeeff; font-size:14px; margin-top:10px;">
+              Specializes in acne treatment and cosmetic procedures. Expert in treating peeling skin conditions.
+            </p>
+          </div>
+          <div class="col-md-3 text-center">
+            <div style="margin-bottom:15px;">
+              <p style="color:#00eaff; font-size:18px; font-weight:600;">$130</p>
+              <p style="color:#bfeeff; font-size:12px;">per consultation</p>
+            </div>
+            <button class="btn btn-astro btn-block mb-2">
+              <i class="fas fa-calendar" style="margin-right:5px;"></i>Book Appointment
+            </button>
+            <button class="btn btn-outline-light btn-block" style="border-color:rgba(0,255,255,0.3); color:#00eaff;">
+              <i class="fas fa-video" style="margin-right:5px;"></i>Video Consult
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Integration Notice -->
+    <div class="card-cosmic" style="background: rgba(255,200,0,0.1); border-left: 4px solid #ffc800;">
+      <div class="row align-items-center">
+        <div class="col-md-1 text-center">
+          <i class="fas fa-info-circle" style="color:#ffc800; font-size:30px;"></i>
+        </div>
+        <div class="col-md-11">
+          <h5 style="color:#ffc800; margin-bottom:5px;">API Integration Ready</h5>
+          <p style="color:#e6fbff; margin:0; font-size:14px;">
+            This page is ready for integration with mFine API or other dermatologist booking services. The UI is fully functional and can be connected to real-time data when ready.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-section">
+    <p>✨ Built for Hackathon • Team GODLIKE ✨</p>
+  </footer>
+
+  <script>
+  // Search functionality (frontend only for now)
+  document.getElementById('search-btn').addEventListener('click', function(){
+    const location = document.getElementById('search-location').value;
+    const specialty = document.getElementById('search-specialty').value;
+    
+    if(location || specialty){
+      alert('Search functionality will be connected to API soon!\n\nLocation: ' + (location || 'Any') + '\nSpecialty: ' + (specialty || 'All'));
+    } else {
+      alert('Please enter location or select specialty to search.');
+    }
+  });
+
+  // Book appointment buttons
+  document.querySelectorAll('.btn-astro').forEach(btn => {
+    if(btn.textContent.includes('Book Appointment')){
+      btn.addEventListener('click', function(){
+        alert('Booking functionality will be integrated with mFine API or booking service soon!');
+      });
+    }
+  });
+
+  // Video consult buttons
+  document.querySelectorAll('.btn-outline-light').forEach(btn => {
+    if(btn.textContent.includes('Video Consult')){
+      btn.addEventListener('click', function(){
+        alert('Video consultation will be available through API integration!');
+      });
+    }
+  });
+  </script>
+
+  <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
+

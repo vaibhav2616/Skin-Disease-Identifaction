@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cosmic DermAI — Skin Infection Detector</title>
+  <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <style>
+  /* PROFESSIONAL SPACE UI THEME (kept from your design) */
+  body {
+    background: radial-gradient(circle at top, #0a0f2d 0%, #050616 40%, #000 100%);
+    color: #f2f8ff;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 120px;
+  }
+  .space-nav { background: rgba(10,20,45,0.85); backdrop-filter: blur(6px); border-bottom:1px solid rgba(0,255,255,0.12); }
+  .logo-icon{ height:40px; filter: drop-shadow(0 0 8px cyan); }
+  .hero-section{ padding:80px 0 30px; text-align:center; }
+  .hero-title{ font-size:40px; text-shadow:0 0 12px rgba(0,255,255,0.25); }
+  .upload-card{ background: rgba(10,20,40,0.6); padding:22px; border-radius:12px; box-shadow:0 0 18px rgba(0,200,255,0.12); }
+  .preview-img{ width:100%; border-radius:10px; display:block; margin:12px 0; }
+  .hide{ display:none; }
+  .btn-astro{ background:linear-gradient(90deg,#00eaff,#0088ff); border-radius:8px; color:#000; font-weight:600; }
+  .result-card{ background: rgba(10,20,40,0.55); padding:18px; border-radius:12px; color:#e6fbff; }
+  .cosmic-badge{ background:linear-gradient(90deg,#00eaff,#0088ff); color:#000; font-weight:700; }
+  .about-section{ padding:70px 0; }
+  .footer-section{ text-align:center; padding:24px; margin-top:40px; background:rgba(0,0,0,0.12); color:#bfeeff; }
+
+  /* Chatbot fixed UI */
+  #chatbot-icon-fixed{ position: fixed; right: 30px; bottom: 30px; width:60px; height:60px; background:#00eaff; color:#000; border-radius:50%; display:flex;align-items:center;justify-content:center; z-index:99999; cursor:pointer; }
+  #chatbot-box-fixed{ position: fixed; right:30px; bottom:100px; width:340px; height:460px; background:rgba(8,12,25,0.96); border-radius:14px; border:1px solid rgba(0,255,255,0.18); display:flex; flex-direction:column; z-index:100000; color:#e6fbff; }
+  .chatbot-hidden{ display:none !important; }
+  .chatbot-body-fixed{ flex:1; padding:12px; overflow-y:auto; }
+  .chat-msg{ max-width:80%; padding:8px 12px; border-radius:12px; margin-bottom:10px; line-height:1.4; }
+  .user-msg{ background:#00eaff; color:#000; margin-left:auto; }
+  .bot-msg{ background:rgba(255,255,255,0.05); color:#e6fbff; border:1px solid rgba(0,255,255,0.06); }
+
+  .custom-file-input ~ .custom-file-label::after { content: "Browse"; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark space-nav navbar-expand-lg">
+    <div class="container">
+      <div class="d-flex align-items-center">
+        <img src="https://cdn-icons-png.flaticon.com/512/3212/3212608.png" class="logo-icon" alt="logo" />
+        <a class="navbar-brand ml-2" href="#" style="color:#e6fbff">Cosmic DermAI</a>
+      </div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" href="/" style="color:#bfeeff">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about-us" style="color:#bfeeff">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="/find-dermatologist" style="color:#bfeeff">Find Dermatologist</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="container">
+      <h1 class="hero-title animate__animated animate__fadeInDown">🪐 AI-Powered Skin Infection Detection</h1>
+      <p class="hero-subtitle animate__animated animate__fadeInUp">Scan your skin like a satellite scans galaxies — Fast • Accurate • Intelligent</p>
+    </div>
+  </section>
+
+  <div class="container main-section animate__animated animate__zoomIn">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="upload-card">
+          <h4 class="text-center mb-3">Upload Image</h4>
+
+          <div class="text-center mb-3">
+            <img id="previewImg" class="preview-img hide" alt="preview" />
+          </div>
+
+          <form action="/predict" method="post" id="upload-file" enctype="multipart/form-data">
+            <div class="custom-file mb-3">
+              <input type="file" class="custom-file-input" id="imageUpload" name="image" accept="image/*" required>
+              <label class="custom-file-label" for="imageUpload">Choose skin image...</label>
+            </div>
+
+            <!-- optional sharpening / temperature control
+            <div class="form-row mb-2">
+              <div class="col">
+                <label for="temp" style="color:#bfeeff">Confidence sharpening (temp)</label>
+                <input type="number" step="0.1" min="0.3" max="2.0" value="1.0" class="form-control" id="temp" name="temp">
+                <small class="form-text text-muted">Lower &lt;1 = sharper/higher top-prob (cosmetic). Default 1.0</small>
+              </div>
+            </div> -->
+
+            <button type="submit" class="btn btn-astro btn-block mt-3">🚀 Analyze</button>
+          </form>
+
+          <div id="loader" class="loader hide"></div>
+
+          <h3 class="result-text text-center mt-4" id="result">{{ prediction_text|default('') }}</h3>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="result-card mt-3">
+          <h5 class="mb-3">Top Predictions</h5>
+          <ul class="list-group cosmic-list">
+            {% if top3 %}
+            {% for label, prob, idx in top3 %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="background:transparent; border-color:rgba(255,255,255,0.06); color:#e9fbff;">
+              <span><strong>{{ loop.index }}.</strong> {{ label }} <small style="color:#bfeeff"> (index={{ idx }})</small></span>
+              <span class="badge cosmic-badge">{{ '%.1f'|format(prob * 100) }}%</span>
+            </li>
+            {% endfor %}
+            {% else %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="background:transparent; border-color:rgba(255,255,255,0.06); color:#e9fbff;">No predictions yet <span class="badge cosmic-badge">—</span></li>
+            {% endif %}
+          </ul>
+        </div>
+
+        {% if all_probs %}
+        <div class="result-card mt-3">
+          <h5 class="mb-3" style="color:#00eaff;">🎨 Confidence per Class</h5>
+          <div class="confidence-bars-container">
+              {% for label, prob in all_probs %}
+            <div class="confidence-bar-item" style="margin-bottom: 18px; padding: 12px; background: rgba(0,234,255,0.05); border-radius: 8px; border-left: 3px solid rgba(0,234,255,0.3);">
+              <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                <span style="color:#e9fbff; font-weight: 600; font-size: 15px; flex: 1;">{{ label }}</span>
+              </div>
+              <div class="confidence-bar-visual" style="display: flex; gap: 2px; align-items: center;">
+                {% set prob_percent = prob * 100 %}
+                {% set filled_blocks = (prob_percent / 10)|int %}
+                {% if filled_blocks == 0 and prob_percent > 0 %}
+                  {% set filled_blocks = 1 %}
+                {% elif filled_blocks > 10 %}
+                  {% set filled_blocks = 10 %}
+                {% endif %}
+                {% if prob_percent >= 85 %}
+                  {% set block_char = '⭐' %}
+                  {% set confidence_label = 'Very High' %}
+                {% elif prob_percent >= 60 %}
+                  {% set block_char = '🔵' %}
+                  {% set confidence_label = 'High' %}
+                {% elif prob_percent >= 40 %}
+                  {% set block_char = '🟡' %}
+                  {% set confidence_label = 'Moderate' %}
+                {% elif prob_percent >= 20 %}
+                  {% set block_char = '🟠' %}
+                  {% set confidence_label = 'Low' %}
+                {% else %}
+                  {% set block_char = '🔴' %}
+                  {% set confidence_label = 'Very Low' %}
+                {% endif %}
+                {% for i in range(10) %}
+                  {% if i < filled_blocks %}
+                    <span style="font-size: 18px;">{{ block_char }}</span>
+                  {% else %}
+                    <span style="font-size: 18px; opacity: 0.3;">⬜</span>
+                  {% endif %}
+                {% endfor %}
+                <span style="margin-left: 10px; color: #bfeeff; font-size: 12px; font-style: italic;">({{ confidence_label }})</span>
+              </div>
+            </div>
+              {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+    <!-- Expanded Disease Information -->
+{% if disease_info %}
+<div class="mt-4 result-card" style="background: rgba(10,20,40,0.7); padding: 24px; border-radius: 14px; box-shadow: 0 0 20px rgba(0,200,255,0.15);">
+  <h4 class="mb-4" style="color: #00eaff; text-align: center; font-weight: 700;">📋 Comprehensive Disease Information</h4>
+  
+  <!-- Description -->
+  <div class="mb-4">
+    <h5 style="color: #00eaff; margin-bottom: 12px; font-size: 18px;">📖 Description</h5>
+    <p style="color: #e6fbff; line-height: 1.8; font-size: 15px;">{{ disease_info.description }}</p>
+  </div>
+
+  <!-- Prevention -->
+  <div class="mb-4">
+    <h5 style="color: #00eaff; margin-bottom: 12px; font-size: 18px;">🛡️ Prevention</h5>
+    <ul style="color: #e6fbff; line-height: 2; padding-left: 20px; font-size: 14px;">
+      {% for item in disease_info.prevention %}
+      <li style="margin-bottom: 8px;">{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Medical Treatments -->
+  <div class="mb-4">
+    <h5 style="color: #00eaff; margin-bottom: 12px; font-size: 18px;">💊 Medical Treatments & Cures</h5>
+    <ul style="color: #e6fbff; line-height: 2; padding-left: 20px; font-size: 14px;">
+      {% for item in disease_info.cures %}
+      <li style="margin-bottom: 8px;">{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Home Remedies -->
+  <div class="mb-3">
+    <h5 style="color: #00eaff; margin-bottom: 12px; font-size: 18px;">🌿 Home Remedies & Natural Solutions</h5>
+    <ul style="color: #e6fbff; line-height: 2; padding-left: 20px; font-size: 14px;">
+      {% for item in disease_info.remedies %}
+      <li style="margin-bottom: 8px;">{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Important Note -->
+  <div style="background: rgba(255,200,0,0.1); border-left: 4px solid #ffc800; padding: 12px; border-radius: 6px; margin-top: 20px;">
+    <p style="color: #ffc800; margin: 0; font-size: 13px; font-weight: 600;">
+      ⚠️ <strong>Important:</strong> This information is for educational purposes only. Always consult with a qualified healthcare professional for proper diagnosis and treatment.
+    </p>
+  </div>
+</div>
+{% endif %}
+
+    <!-- Symptom Assessment Questionnaire -->
+{% if disease_info %}
+<div class="mt-4 result-card" style="background: rgba(10,20,40,0.75); padding: 28px; border-radius: 14px; box-shadow: 0 0 25px rgba(0,200,255,0.2); border: 1px solid rgba(0,255,255,0.15);">
+  <h4 class="mb-3" style="color: #00eaff; text-align: center; font-weight: 700; font-size: 24px;">🔍 Symptom Assessment Questionnaire</h4>
+  <p style="color: #bfeeff; text-align: center; margin-bottom: 25px; font-size: 15px; font-style: italic;">Help us understand your symptoms better by answering these dermatologist-recommended questions</p>
+  
+  <form id="symptom-questionnaire">
+    <!-- Question 1: Itching -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">1️⃣</span> Do you experience itching in the affected area?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="itching" id="itching-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="itching-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="itching" id="itching-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="itching-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="itching" id="itching-sometimes" value="sometimes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="itching-sometimes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Sometimes</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 2: Redness -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">2️⃣</span> Do you notice redness or inflammation in the affected area?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="redness" id="redness-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="redness-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="redness" id="redness-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="redness-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="redness" id="redness-mild" value="mild" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="redness-mild" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Mild</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 3: Swelling -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">3️⃣</span> Is there any swelling or raised areas on the skin?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="swelling" id="swelling-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="swelling-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="swelling" id="swelling-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="swelling-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="swelling" id="swelling-slight" value="slight" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="swelling-slight" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Slight</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 4: Pain or Discomfort -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">4️⃣</span> Do you experience pain, burning, or discomfort?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="pain" id="pain-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="pain-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="pain" id="pain-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="pain-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="pain" id="pain-mild" value="mild" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="pain-mild" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Mild</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 5: Duration -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">5️⃣</span> How long have you been experiencing these symptoms?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="duration" id="duration-recent" value="recent" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="duration-recent" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Less than 1 week</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="duration" id="duration-weeks" value="weeks" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="duration-weeks" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">1-4 weeks</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="duration" id="duration-months" value="months" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="duration-months" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">More than 1 month</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 6: Spreading -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">6️⃣</span> Is the condition spreading or getting worse?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="spreading" id="spreading-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="spreading-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes, spreading</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="spreading" id="spreading-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="spreading-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No change</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="spreading" id="spreading-improving" value="improving" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="spreading-improving" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Improving</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question 7: Discharge or Oozing -->
+    <div class="question-group mb-4" style="background: rgba(0,234,255,0.05); padding: 18px; border-radius: 10px; border-left: 3px solid #00eaff;">
+      <label style="color: #00eaff; font-weight: 600; font-size: 16px; margin-bottom: 12px; display: block;">
+        <span style="margin-right: 8px;">7️⃣</span> Is there any discharge, oozing, or crusting?
+      </label>
+      <div style="margin-left: 30px;">
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="discharge" id="discharge-yes" value="yes" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="discharge-yes" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Yes</label>
+        </div>
+        <div class="form-check form-check-inline" style="margin-right: 20px;">
+          <input class="form-check-input" type="radio" name="discharge" id="discharge-no" value="no" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="discharge-no" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="discharge" id="discharge-occasional" value="occasional" style="accent-color: #00eaff; cursor: pointer;">
+          <label class="form-check-label" for="discharge-occasional" style="color: #e6fbff; margin-left: 8px; cursor: pointer;">Occasional</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center mt-4">
+      <button type="button" id="submit-questionnaire" class="btn btn-astro" style="padding: 12px 40px; font-size: 16px; font-weight: 600;">
+        📊 Submit Assessment
+      </button>
+    </div>
+
+    <!-- Results Display Area -->
+    <div id="questionnaire-results" style="display: none; margin-top: 25px; padding: 20px; background: rgba(0,234,255,0.08); border-radius: 10px; border: 1px solid rgba(0,255,255,0.2);">
+      <h5 style="color: #00eaff; margin-bottom: 15px; font-weight: 600;">📋 Your Symptom Summary</h5>
+      <div id="results-content" style="color: #e6fbff; line-height: 1.8;"></div>
+      <div style="margin-top: 15px; padding: 12px; background: rgba(255,200,0,0.1); border-left: 4px solid #ffc800; border-radius: 6px;">
+        <p style="color: #ffc800; margin: 0; font-size: 13px; font-weight: 600;">
+          💡 <strong>Next Steps:</strong> Share this information with your dermatologist for a comprehensive evaluation.
+        </p>
+      </div>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+  </div>
+
+  <section id="about-us" class="about-section">
+    <div class="container">
+      <h2 class="text-center mb-4">🌌 About Cosmic DermAI</h2>
+      <p class="about-text">Cosmic DermAI is an AI-powered dermatology scanner designed for rapid and accurate skin infection detection. Upload an image and get the model's top predictions with confidence scores.</p>
+    </div>
+  </section>  
+
+  <footer class="footer-section">
+    <p>✨ Built for Hackathon • Team GODLIKE ✨</p>
+  </footer>
+
+  <!-- CHATBOT (local fallback only; no API key leaked) -->
+  <div id="chatbot-icon-fixed" title="Open chat">💬</div>
+  <div id="chatbot-box-fixed" class="chatbot-hidden" aria-hidden="true">
+    <div class="chatbot-header-fixed" style="background:linear-gradient(90deg,#00eaff,#0088ff); color:#000; padding:8px 12px;">
+      <div>🤖 Cosmic Assistant</div>
+      <div id="chatbot-minimize-btn" style="cursor:pointer;font-size:20px;">—</div>
+    </div>
+    <div id="chatbot-body" class="chatbot-body-fixed" role="log" aria-live="polite"></div>
+    <div class="chatbot-input-area-fixed" style="display:flex; padding:10px; border-top:1px solid rgba(255,255,255,0.03);">
+      <input id="chatbot-input" type="text" placeholder="Ask about the system..." autocomplete="off" style="flex:1; border:none; background:rgba(255,255,255,0.03); color:#fff; padding:8px 10px; border-radius:8px;">
+      <button id="chatbot-send" style="margin-left:8px; background:#00eaff; border:none; color:#000; padding:8px 12px; border-radius:8px;">➤</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+(async function(){
+  const icon = document.getElementById('chatbot-icon-fixed');
+  const panel = document.getElementById('chatbot-box-fixed');
+  const minimize = document.getElementById('chatbot-minimize-btn');
+  const body = document.getElementById('chatbot-body');
+  const input = document.getElementById('chatbot-input');
+  const send = document.getElementById('chatbot-send');
+
+  function addMsg(text, who){
+    const d = document.createElement('div');
+    d.className = 'chat-msg ' + (who === 'user' ? 'user-msg' : 'bot-msg');
+    d.textContent = text;
+    body.appendChild(d);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  async function callChatAPI(text){
+    const resp = await fetch('/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ query: text })
+    });
+    if(!resp.ok){
+      throw new Error('Server error ' + resp.status);
+    }
+    return resp.json();
+  }
+
+  icon.addEventListener('click', () => {
+    panel.classList.remove('chatbot-hidden'); icon.style.display='none';
+    addMsg("Hello astronaut! 🚀 I'm here to help. Ask about symptoms, remedies, or how to use the system.", 'bot');
+  });
+  minimize.addEventListener('click', () => { panel.classList.add('chatbot-hidden'); icon.style.display='flex'; });
+
+  async function doSend(){
+    const t = (input.value || '').trim(); if(!t) return;
+    addMsg(t,'user'); input.value='';
+    // typing indicator
+    const typing = document.createElement('div'); typing.className='chat-msg bot-msg'; typing.id='typingId'; typing.textContent='…';
+    body.appendChild(typing); body.scrollTop = body.scrollHeight;
+    try{
+      const json = await callChatAPI(t);
+      document.getElementById('typingId')?.remove();
+      addMsg(json.answer || "No answer.", 'bot');
+      // show sources (clickable expand)
+      if(json.sources && json.sources.length){
+        const sdom = document.createElement('div'); sdom.style.fontSize='0.9rem'; sdom.style.marginTop='6px';
+        sdom.innerHTML = "<strong>Sources:</strong><br/>";
+        json.sources.forEach(src => {
+          const el = document.createElement('div');
+          el.style.marginTop='4px';
+          el.innerHTML = `<em>${src.source_file || 'kb'}</em>: ${src.snippet.slice(0,200)}...`;
+          sdom.appendChild(el);
+        });
+        body.appendChild(sdom);
+        body.scrollTop = body.scrollHeight;
+      }
+    }catch(err){
+      document.getElementById('typingId')?.remove();
+      addMsg('Sorry — server or network error: '+err.message, 'bot');
+    }
+  }
+
+  send.addEventListener('click', doSend);
+  input.addEventListener('keypress', e => { if(e.key === 'Enter'){ e.preventDefault(); doSend(); } });
+
+})();
+
+// Image preview functionality
+(function(){
+  const fileInput = document.getElementById('imageUpload');
+  const previewImg = document.getElementById('previewImg');
+  const fileLabel = fileInput.nextElementSibling;
+
+  fileInput.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(file){
+      fileLabel.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = function(e){
+        previewImg.src = e.target.result;
+        previewImg.classList.remove('hide');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      previewImg.classList.add('hide');
+      fileLabel.textContent = 'Choose skin image...';
+    }
+  });
+})();
+
+// Symptom Questionnaire functionality
+(function(){
+  const submitBtn = document.getElementById('submit-questionnaire');
+  const resultsDiv = document.getElementById('questionnaire-results');
+  const resultsContent = document.getElementById('results-content');
+  const form = document.getElementById('symptom-questionnaire');
+
+  if(submitBtn && form){
+    submitBtn.addEventListener('click', function(){
+      const formData = new FormData(form);
+      const answers = {};
+      
+      // Collect all radio button answers
+      const questions = ['itching', 'redness', 'swelling', 'pain', 'duration', 'spreading', 'discharge'];
+      questions.forEach(q => {
+        const selected = form.querySelector(`input[name="${q}"]:checked`);
+        if(selected){
+          answers[q] = selected.value;
+        }
+      });
+
+      // Check if at least some questions are answered
+      const answeredCount = Object.keys(answers).length;
+      if(answeredCount === 0){
+        alert('Please answer at least one question before submitting.');
+        return;
+      }
+
+      // Generate results summary
+      let summary = '<div style="line-height: 2;">';
+      summary += '<strong style="color: #00eaff;">Your Responses:</strong><br/><br/>';
+      
+      const questionLabels = {
+        'itching': 'Itching',
+        'redness': 'Redness/Inflammation',
+        'swelling': 'Swelling',
+        'pain': 'Pain/Discomfort',
+        'duration': 'Duration',
+        'spreading': 'Spreading/Worsening',
+        'discharge': 'Discharge/Oozing'
+      };
+
+      questions.forEach(q => {
+        if(answers[q]){
+          const label = questionLabels[q] || q;
+          const value = answers[q].charAt(0).toUpperCase() + answers[q].slice(1);
+          summary += `• <strong>${label}:</strong> ${value}<br/>`;
+        }
+      });
+
+      summary += '</div>';
+
+      // Add severity assessment
+      let severity = 'Mild';
+      let severityColor = '#00eaff';
+      const yesCount = Object.values(answers).filter(v => v === 'yes' || v === 'sometimes' || v === 'mild').length;
+      
+      if(yesCount >= 5){
+        severity = 'Moderate to Severe';
+        severityColor = '#ffc800';
+      } else if(yesCount >= 3){
+        severity = 'Moderate';
+        severityColor = '#ffaa00';
+      }
+
+      summary += `<div style="margin-top: 15px; padding: 12px; background: rgba(0,234,255,0.1); border-radius: 8px; border-left: 4px solid ${severityColor};"><strong style="color: ${severityColor};">Symptom Severity Assessment:</strong> ${severity}</div>`;
+
+      // Display results
+      resultsContent.innerHTML = summary;
+      resultsDiv.style.display = 'block';
+      
+      // Smooth scroll to results
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+})();
+</script>
+
+  <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
