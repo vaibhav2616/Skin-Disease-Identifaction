@@ -70,11 +70,11 @@ Challenges: The limited size of the dataset posed challenges for generalization,
 To run this project locally, follow these steps:
 
 ### 1. Clone the repository:
-            git clone https://github.com/varshitha-g/Skin-Disease-Prediction.git
+            git clone https://github.com/vaibhav2616/Skin-Disease-Prediction.git
             cd Skin-Disease-Prediction
 ### 2. Create a virtual environment:
             python -m venv env
-            source env/bin/activate  # On Windows, use `env\Scripts\activate`
+            env\Scripts\activate`
 ### 3. Install the dependencies:
             pip install -r requirements.txt
 ## Usage
